@@ -2,14 +2,17 @@
   "name": "html-component",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "html-component.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node html-component-test.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^8.51.0"
+    "eslint": "^8.51.0",
+    "get-id": "github:JamesRobertHugginsNgo/get-id#1.0.0",
+    "make-html-string": "github:JamesRobertHugginsNgo/make-html-string#1.0.0"
   }
 }
