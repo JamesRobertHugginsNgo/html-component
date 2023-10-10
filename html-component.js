@@ -1,54 +1,85 @@
 export const htmlComponents = {};
 
+/**
+ * @param {string} type
+ * @param {object} htmlComponent
+ * @param {function} htmlComponent.makeHtmlStringDefinition
+ * @param {function} htmlComponent.initialize
+ */
 export function registerHtmlComponent(type, htmlComponent) {
 	htmlComponents[type] = htmlComponent;
 }
 
-export function makeHtmlStringDefinition(definition = {}) {
-	if (Array.isArray(definition)) {
-		const length = definition.length;
+/**
+ * @param {any} componentDefinition
+ * @returns {object}
+ */
+export function makeHtmlStringDefinition(componentDefinition = {}) {
+	if (Array.isArray(componentDefinition)) {
+		const htmlStringDefinition = [];
+
+		const length = componentDefinition.length;
 		for (let index = 0; index < length; index++) {
-			definition[index] = makeHtmlStringDefinition(definition[index]);
+			const result = makeHtmlStringDefinition(componentDefinition[index]);
+			if (result == null) continue;
+
+			htmlStringDefinition.push(result);
 		}
 
-	} else if (definition && typeof definition === 'object') {
-		const { type } = definition;
-		if (type) {
-			definition = { type, ...htmlComponents[type].makeHtmlStringDefinition(definition) };
-		}
-
-		const { children } = definition;
-		if (children) {
-			definition.children = makeHtmlStringDefinition(children);
-		}
+		return htmlStringDefinition;
 	}
 
-	return definition;
+	if (componentDefinition && typeof componentDefinition === 'object') {
+		const htmlStringDefinition = {};
+
+		const { type } = componentDefinition;
+		Object.assign(htmlStringDefinition, !type ? componentDefinition: {
+			type,
+			...htmlComponents[type].makeHtmlStringDefinition(componentDefinition)
+		});
+
+		const { children } = htmlStringDefinition;
+		if (children) {
+			htmlStringDefinition.children = makeHtmlStringDefinition(children);
+		}
+
+		return htmlStringDefinition;
+	}
+
+	return componentDefinition;
 }
 
-export function getInitializers(definition = {}) {
+/**
+ * @param {any} htmlStringDefinition
+ * @returns {[any]}
+ */
+export function getInitializers(htmlStringDefinition = {}) {
 	const initializers = [];
 
-	if (Array.isArray(definition)) {
-		const length = definition.length;
+	if (Array.isArray(htmlStringDefinition)) {
+		const length = htmlStringDefinition.length;
 		for (let index = 0; index < length; index++) {
-			initializers.push(...getInitializers(definition[index]));
+			initializers.push(...getInitializers(htmlStringDefinition[index]));
 		}
-	} else if (definition && typeof definition === 'object') {
-		const { children } = definition;
+	} else if (htmlStringDefinition && typeof htmlStringDefinition === 'object') {
+		const { children } = htmlStringDefinition;
 		if (children) {
 			initializers.push(...getInitializers(children));
 		}
 
-		const { type } = definition;
+		const { type } = htmlStringDefinition;
 		if (type && htmlComponents[type].initialize) {
-			initializers.push(definition);
+			initializers.push(htmlStringDefinition);
 		}
 	}
 
 	return initializers;
 }
 
+/**
+ * @param {[any]} initializers
+ * @returns {undefined | Promise}
+ */
 export function initialize(initializers = []) {
 	let promise;
 
