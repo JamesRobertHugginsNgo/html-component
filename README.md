@@ -58,6 +58,7 @@ const htmlString = makeHtmlString(htmlStringDefinition);
 document.body.innerHTML = htmlString;
 
 const initializers = getInitializers(htmlStringDefinition);
-initialize(initializers);
+const state = {};
 
+initialize(initializers, state);
 ```
