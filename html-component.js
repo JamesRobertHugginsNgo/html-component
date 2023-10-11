@@ -80,14 +80,14 @@ export function getInitializers(htmlStringDefinition = {}) {
  * @param {[any]} initializers
  * @returns {undefined | Promise}
  */
-export function initialize(initializers = []) {
+export function initialize(initializers = [], state = {}) {
 	let promise;
 
 	const length = initializers.length;
 	for (let index = 0; index < length; index++) {
 		const initializer = initializers[index];
 		const { type } = initializer;
-		const result = htmlComponents[type].initialize(initializer);
+		const result = htmlComponents[type].initialize(initializer, state);
 		if (result instanceof Promise && !promise) {
 			promise = Promise.resolve();
 		}
