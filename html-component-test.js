@@ -36,8 +36,8 @@ registerHtmlComponent('text', {
 			]
 		};
 	},
-	initialize(definition) {
-		console.log('text', definition.id);
+	initialize(definition, state = {}) {
+		state[definition.id] = 'text';
 	}
 });
 
@@ -60,8 +60,8 @@ registerHtmlComponent('section', {
 			]
 		};
 	},
-	initialize(definition) {
-		console.log('section', definition.id);
+	initialize(definition, state = {}) {
+		state[definition.id] = 'section';
 	}
 });
 
@@ -84,8 +84,8 @@ registerHtmlComponent('form', {
 			]
 		};
 	},
-	initialize(definition) {
-		console.log('form', definition.id);
+	initialize(definition, state) {
+		state[definition.id] = 'form';
 	}
 });
 
@@ -141,7 +141,14 @@ console.groupEnd();
 console.log();
 console.groupEnd();
 
+const state = {};
+
 console.group('INITIALIZE');
-initialize(initializers);
+initialize(initializers, state);
+console.log();
+console.groupEnd();
+
+console.group('STATE');
+console.log(inspect(state));
 console.log();
 console.groupEnd();
