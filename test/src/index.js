@@ -1,14 +1,13 @@
-/* global console */
+/* global console document */
 
 import getId from 'get-id';
 import makeHtmlString from 'make-html-string';
-import Util from 'util';
 
 import {
 	registerHtmlComponent,
 	buildHtmlComponent,
 	initialize
-} from './html-component.js';
+} from '../../html-component.js';
 
 registerHtmlComponent('text', {
 	build({
@@ -114,7 +113,7 @@ registerHtmlComponent('form', {
 });
 
 function inspect(object) {
-	return Util.inspect(object, { showHidden: false, depth: null, colors: true });
+	return object;
 }
 
 const componentDefinition = {
@@ -153,6 +152,7 @@ console.log();
 console.groupEnd();
 
 const htmlString = makeHtmlString(htmlDefinition);
+document.body.innerHTML = htmlString;
 
 console.group('HTML STRING');
 console.log(htmlString);
