@@ -14,21 +14,22 @@ npm install --save https://github.com/JamesRobertHugginsNgo/html-component.git#1
 import { registerHtmlComponent } from 'html-component';
 
 const htmlComponent = {
-	makeHtmlStringDefinition(componentDefinition = {}) {
-		const { id, message } = componentDefinition;
+	build(definition = {}) {
+		const { id, message } = definition;
+
 		const htmlStringDefinition = {
 			name: 'p',
 			attributes: { id },
 			children: [message]
 		};
-		return htmlStringDefinition;
+
+		const initializer = {};
+
+		return { htmlStringDefinition, initializer };
 	},
 
-	initialize(htmlStringDefinition = {}) {
-		const { attributes } = htmlStringDefinition;
-		const { id } = attributes;
-		const reference = document.getElementById(id);
-		console.log(reference);
+	initialize(definition, state) {
+		console.log(definition, state);
 	}
 };
 
@@ -38,7 +39,7 @@ registerHtmlComponent('component-name', htmlComponent);
 ## Using a Registered HTML Component
 
 ``` JavaScript
-import { makeHtmlStringDefinition, getInitializers, initialize  } from 'html-component';
+import { buildHtmlComponent, initialize  } from 'html-component';
 import makeHtmlString from 'make-html-string';
 
 const componentDefinition = {
@@ -52,13 +53,14 @@ const componentDefinition = {
 	]
 };
 
-const htmlStringDefinition = makeHtmlStringDefinition(componentDefinition);
+const {
+	htmlStringDefinition,
+	initializers
+} = buildHtmlComponent(componentDefinition);
 
 const htmlString = makeHtmlString(htmlStringDefinition);
 document.body.innerHTML = htmlString;
 
-const initializers = getInitializers(htmlStringDefinition);
 const state = {};
-
 initialize(initializers, state);
 ```
