@@ -5,7 +5,7 @@ A system for creating and using HTML components.
 ## Installation
 
 ```
-npm install --save https://github.com/JamesRobertHugginsNgo/html-component.git#1.0.0
+npm install --save https://github.com/JamesRobertHugginsNgo/html-component.git#2.0.1
 ```
 
 ## Registering an HTML Component
