@@ -11,24 +11,17 @@ import {
 } from './html-component.js';
 
 registerHtmlComponent('text', {
-	build({
-		id = getId('text-'),
-		title,
-	}) {
+	build({ id = getId('text-'), title }) {
 		return {
 			htmlStringDefinition: [
 				{
 					id,
 					name: 'div',
-					attributes: {
-						id: `${id}-field`
-					},
+					attributes: { id: `${id}-field` },
 					children: [
 						{
 							name: 'label',
-							attributes: {
-								for: id
-							},
+							attributes: { for: id },
 							children: [title || 'Untitled']
 						},
 						{
@@ -52,11 +45,7 @@ registerHtmlComponent('text', {
 });
 
 registerHtmlComponent('section', {
-	build({
-		id = getId('section-'),
-		title,
-		fields = []
-	}) {
+	build({ id = getId('section-'), title, fields = [] }) {
 		return {
 			htmlStringDefinition: {
 				id,
@@ -83,11 +72,7 @@ registerHtmlComponent('section', {
 });
 
 registerHtmlComponent('form', {
-	build({
-		id = getId('form-'),
-		title,
-		sections = []
-	}) {
+	build({ id = getId('form-'), title, sections = [] }) {
 		return {
 			htmlStringDefinition: {
 				id,
@@ -146,6 +131,11 @@ const {
 	htmlStringDefinition: htmlDefinition,
 	initializers
 } = buildHtmlComponent(componentDefinition);
+
+console.group('COMPONENT DEFINITION');
+console.log(inspect(componentDefinition));
+console.log();
+console.groupEnd();
 
 console.group('HTML DEFINITION');
 console.log(inspect(htmlDefinition));

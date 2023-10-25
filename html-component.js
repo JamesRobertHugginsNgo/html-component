@@ -12,7 +12,7 @@ export function registerHtmlComponent(type, htmlComponent) {
 }
 
 /**
- * Get HTML string definition and initializers from an HTML component definition.
+ * Get HTML string definition and an array of initializers from an HTML component definition.
  * @param {any} componentDefinition
  * @returns {{ htmlStringDefinition: any, initializers: [object] }}
  */
@@ -84,6 +84,7 @@ export function buildHtmlComponent(componentDefinition = {}) {
 }
 
 /**
+ * Initialize all HTML components using initializers.
  * @param {[object]} initializers
  * @returns {undefined | Promise}
  */
