@@ -7,31 +7,57 @@ A system for creating and using HTML components.
 ```
 npm install --save https://github.com/JamesRobertHugginsNgo/html-component.git#2.0.1
 ```
-
-## Registering an HTML Component
+### HTML Component
 
 ``` JavaScript
-import { registerHtmlComponent } from 'html-component';
+// make-html-component.js
 
-const htmlComponent = {
-	build(definition = {}) {
-		const { id, message } = definition;
+/**
+ * A reusable custom HTML component.
+ * @type {object}
+ * @oroperty {function} [build]
+ * @oroperty {function} [initializer]
+ */
+export default const htmlComponent = {
 
-		const htmlStringDefinition = {
-			name: 'p',
-			attributes: { id },
-			children: [message]
-		};
+  /**
+   * Returns HTML string definition and an optional initializer object.
+   * @param {object} componentDefinition
+   * @returns {{ htmlStringDefinition: any, initializer?: object }}
+   */
+  build(componentDefinition) {
+    const { id, message } = componentDefinition;
 
-		const initializer = {};
+    const htmlStringDefinition = {
+      name: 'p',
+      attributes: { id },
+      children: [message]
+    };
 
-		return { htmlStringDefinition, initializer };
-	},
+    const initializer = {};
 
-	initialize(definition, state) {
-		console.log(definition, state);
-	}
+    return { htmlStringDefinition, initializer };
+  },
+
+  /**
+   * Initialize the component based on initializer object.
+   * @param {object} initializer
+   * @param {object} [state]
+   * @returns {undefined|Promise}
+   */
+  initialize(initializer, state) {
+    console.log(initializer, state);
+  }
 };
+```
+
+## Registering HTML Component
+
+``` JavaScript
+// register-html-component.js
+
+import { registerHtmlComponent } from 'html-component';
+import htmlComponent from './make-html-component.js';
 
 registerHtmlComponent('component-name', htmlComponent);
 ```
@@ -39,23 +65,27 @@ registerHtmlComponent('component-name', htmlComponent);
 ## Using a Registered HTML Component
 
 ``` JavaScript
+// build-html-component.js
+
 import { buildHtmlComponent, initialize  } from 'html-component';
 import makeHtmlString from 'make-html-string';
 
+import './register-html-component.js';
+
 const componentDefinition = {
-	name: 'div',
-	children: [
-		{
-			type: 'component-name',
-			id: 'hello-world-id',
-			message: 'Hello World'
-		}
-	]
+  name: 'div',
+  children: [
+    {
+      type: 'component-name',
+      id: 'hello-world-id',
+      message: 'Hello World'
+    }
+  ]
 };
 
 const {
-	htmlStringDefinition,
-	initializers
+  htmlStringDefinition,
+  initializers
 } = buildHtmlComponent(componentDefinition);
 
 const htmlString = makeHtmlString(htmlStringDefinition);
