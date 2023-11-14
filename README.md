@@ -5,12 +5,12 @@ A system for creating and using HTML components.
 ## Installation
 
 ```
-npm install --save https://github.com/JamesRobertHugginsNgo/html-component.git#2.0.1
+npm install https://github.com/JamesRobertHugginsNgo/html-component.git#2.0.1
 ```
 ### HTML Component
 
 ``` JavaScript
-// make-html-component.js
+// File: make-html-component.js
 
 /**
  * A reusable custom HTML component.
@@ -54,7 +54,7 @@ export default const htmlComponent = {
 ## Registering HTML Component
 
 ``` JavaScript
-// register-html-component.js
+// File: register-html-component.js
 
 import { registerHtmlComponent } from 'html-component';
 import htmlComponent from './make-html-component.js';
@@ -65,7 +65,7 @@ registerHtmlComponent('component-name', htmlComponent);
 ## Using a Registered HTML Component
 
 ``` JavaScript
-// build-html-component.js
+// File: build-html-component.js
 
 import { buildHtmlComponent, initialize  } from 'html-component';
 import makeHtmlString from 'make-html-string';

@@ -1,10 +1,10 @@
 export const htmlComponents = {};
 
 /**
- * Register a reusable HTML component.
+ * Register a reusable HTML component object.
  * @param {string} type
  * @param {object} htmlComponent
- * @param {function} htmlComponent.build
+ * @param {function} htmlComponent.makeHtmlDefinition
  * @param {function} htmlComponent.initialize
  */
 export function registerHtmlComponent(type, htmlComponent) {
@@ -12,93 +12,70 @@ export function registerHtmlComponent(type, htmlComponent) {
 }
 
 /**
- * Get HTML string definition and an array of initializers from an HTML component definition.
- * @param {any} componentDefinition
+ * Turn an HTML component definition to HTML string definition.
+ * @param {any} definition
  * @returns {{ htmlStringDefinition: any, initializers: [object] }}
  */
-export function buildHtmlComponent(componentDefinition = {}) {
-	if (componentDefinition == null) {
-		return {
-			htmlStringDefinition: null,
-			initializers: []
-		};
+export function makeHtmlDefinition(definition = {}, callback) {
+	if (definition == null) {
+		return null;
 	}
 
-	if (typeof componentDefinition === 'object') {
-		if (Array.isArray(componentDefinition)) {
+	if (typeof definition === 'object') {
+		if (Array.isArray(definition)) {
 			const htmlStringDefinition = [];
-			const initializers = [];
-
-			const length = componentDefinition.length;
+			const length = definition.length;
 			for (let index = 0; index < length; index++) {
-				const {
-					htmlStringDefinition: resultHtmlStringDefinition,
-					initializers: resultInitializers
-				} = buildHtmlComponent(componentDefinition[index]);
-				htmlStringDefinition.push(resultHtmlStringDefinition);
-				initializers.push(...resultInitializers);
+				htmlStringDefinition.push(makeHtmlDefinition(definition[index], callback));
 			}
-
-			return { htmlStringDefinition, initializers };
+			return htmlStringDefinition;
 		}
 
-		const { type } = componentDefinition;
+		const { type } = definition;
 		if (type) {
-			const {
-				htmlStringDefinition: resultHtmlStringDefinition,
-				initializer = {}
-			} = htmlComponents[type].build(componentDefinition);
-
-			const {
-				htmlStringDefinition,
-				initializers: resultInitializers
-			} = buildHtmlComponent(resultHtmlStringDefinition);
-
-			return {
-				htmlStringDefinition,
-				initializers: [
-					...resultInitializers,
-					Object.assign(componentDefinition, initializer)
-				]
-			};
+			const value = makeHtmlDefinition(
+				htmlComponents[type].makeHtmlDefinition(definition),
+				callback
+			);
+			if (callback) {
+				callback(definition);
+			}
+			return value;
 		}
 
-		const { children } = componentDefinition;
+		const { children } = definition;
 		if (children) {
-			const { htmlStringDefinition, initializers } = buildHtmlComponent(children);
-
 			return {
-				htmlStringDefinition: {
-					...componentDefinition,
-					children: htmlStringDefinition
-				},
-				initializers
+				...definition,
+				children: makeHtmlDefinition(children, callback)
 			};
 		}
 	}
 
-	return {
-		htmlStringDefinition: componentDefinition,
-		initializers: []
-	};
+	return definition;
 }
 
 /**
- * Initialize all HTML components using initializers.
+ * Initialize all HTML components.
  * @param {[object]} initializers
+ * @param {object} state
  * @returns {undefined | Promise}
  */
-export function initialize(initializers = [], state = {}) {
+export function initialize(initializers = [], state) {
 	let promise;
 
 	const length = initializers.length;
 	for (let index = 0; index < length; index++) {
-		const initializer = initializers[index];
-		const { type } = initializer;
-		const result = htmlComponents[type].initialize(initializer, state);
+		const definition = initializers[index];
+		const { type } = definition;
+		if (!htmlComponents[type].initialize) continue;
+
+		const result = htmlComponents[type].initialize(definition, state);
 		if (result instanceof Promise && !promise) {
-			promise = Promise.resolve();
+			promise = result;
+			continue;
 		}
+
 		if (promise) {
 			promise = promise.then(() => {
 				return result;
