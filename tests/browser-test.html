@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<script src="../node_modules/get-id/dist/get-id.js"></script>
+	<script src="../node_modules/make-html-string/dist/make-html-string.js"></script>
+	<script src="../dist/html-component.js"></script>
+	<script>
+		const {
+			default: makeHtmlString
+		} = MakeHtmlString;
+		const {
+			registerHtmlComponent,
+			makeHtmlDefinition,
+			initialize
+		} = HtmlComponent;
+
+		registerHtmlComponent('test1', {
+			makeHtmlDefinition: (definition) => {
+				const {
+					id = getId('test-1-'),
+					message
+				} = definition;
+				Object.assign(definition, { id });
+				return {
+					name: 'span',
+					attributes: { id },
+					children: [
+						'Hello ',
+						message
+					]
+				};
+			},
+			initialize(definition, state) {
+				if (state) {
+					const { id } = definition;
+					const { counter = 0 } = state;
+					console.log(counter, id, document.getElementById(id));
+					Object.assign(state, { counter: counter + 1 });
+				}
+			}
+		});
+
+		registerHtmlComponent('test2', {
+			makeHtmlDefinition: (definition) => {
+				const {
+					id = getId('test-2-'),
+					message
+				} = definition;
+				Object.assign(definition, { id });
+				return {
+					name: 'strong',
+					attributes: { id },
+					children: [
+						'Hello ',
+						message
+					]
+				};
+			}
+		});
+
+		const componentDefinition = {
+			type: 'test1',
+			message: [
+				{
+					type: 'test2',
+					message: 'World'
+				},
+				' ',
+				{
+					type: 'test1',
+					message: 'Universe'
+				}
+			]
+		};
+
+		const initializers = [];
+		const htmlDefinition = makeHtmlDefinition(componentDefinition, (definition) => {
+			initializers.push(definition);
+		});
+
+		const htmlString = makeHtmlString(htmlDefinition);
+
+		console.log('COMPONENT DEFINITION', componentDefinition);
+		console.log('HTML DEFINITION', htmlDefinition);
+		console.log('HTML STRING', htmlString);
+
+		document.body.innerHTML = htmlString;
+
+		const state = {};
+		console.log('INITIALIZERS', initializers);
+		console.group('INITIALIZE');
+		initialize(initializers, state);
+		console.groupEnd();
+		console.log('STATE', state);
+	</script>
+</body>
+
+</html>
