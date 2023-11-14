@@ -1,96 +1,60 @@
 # html-component
 
-A system for creating and using HTML components.
+JavaScript module for a reusable way of making [make-html-string](https://github.com/JamesRobertHugginsNgo/make-html-string) definitions, and a way to define JavaScript code initializers.
 
-## Installation
+## NPM Installation
 
 ```
 npm install https://github.com/JamesRobertHugginsNgo/html-component.git#2.0.1
 ```
-### HTML Component
 
-``` JavaScript
-// File: make-html-component.js
+## Constant Variable: htmlComponents
 
-/**
- * A reusable custom HTML component.
- * @type {object}
- * @oroperty {function} [build]
- * @oroperty {function} [initializer]
- */
-export default const htmlComponent = {
+Type: `object`.
 
-  /**
-   * Returns HTML string definition and an optional initializer object.
-   * @param {object} componentDefinition
-   * @returns {{ htmlStringDefinition: any, initializer?: object }}
-   */
-  build(componentDefinition) {
-    const { id, message } = componentDefinition;
+A dictionary of registered HTML component.
 
-    const htmlStringDefinition = {
-      name: 'p',
-      attributes: { id },
-      children: [message]
-    };
+## Function: registerHtmlComponent(type, htmlComponent)
 
-    const initializer = {};
+Argument | Type | Description
+-- | -- | --
+`type` | `string` | `type` value of `makeHtmlDefinition`'s `definition` argument.
+`htmlComponent` | `object` | An object containing a `makeHtmlDefinition` function and an optional `initialize` function.
 
-    return { htmlStringDefinition, initializer };
-  },
+## Function: makeHtmlDefinition(definition, callback)
 
-  /**
-   * Initialize the component based on initializer object.
-   * @param {object} initializer
-   * @param {object} [state]
-   * @returns {undefined|Promise}
-   */
-  initialize(initializer, state) {
-    console.log(initializer, state);
-  }
-};
-```
+Argument | Type | Description
+-- | -- | --
+`definition` | `string` | _Optional_. Similar to the `definition` argument for the [make-html-string](https://github.com/JamesRobertHugginsNgo/make-html-string) function, but also allows custom definition used by HTML component. HTML component is defined by the `type` definition. _Default to `{}`_
+`callback` | `function` | _Optional_. Called after an HTML component calls its `makeHtmlDefinition` function passing the current HTML component's `definition` in the order when they finish. Use `callback` to generate the `definitions` argument for the `initialize` function.
 
-## Registering HTML Component
+Return type: `any`.
 
-``` JavaScript
-// File: register-html-component.js
+Return value can be used as `defination` argument for the [make-html-string](https://github.com/JamesRobertHugginsNgo/make-html-string) function.
 
-import { registerHtmlComponent } from 'html-component';
-import htmlComponent from './make-html-component.js';
+## Function: initialize(definitions, state)
 
-registerHtmlComponent('component-name', htmlComponent);
-```
+Argument | Type | Description
+-- | -- | --
+`definitions` | `[object]` | A array of HTML component definition, in the order of execution.
+`state` | `object` | _Optional_. A way to share values with other component and with the web application.
 
-## Using a Registered HTML Component
+Return type: `undefined` or `promise`.
 
-``` JavaScript
-// File: build-html-component.js
+This function executes each HTML component's `initialize` function in sequence. When the `initialize` function returns a `Promise`, it will use the promise chain to ensure the functions are executed in the right order.
 
-import { buildHtmlComponent, initialize  } from 'html-component';
-import makeHtmlString from 'make-html-string';
+## Using Script Tag
 
-import './register-html-component.js';
+The JavaScript library (found in the "dist" folder) can be used directly using an HTML script tag. The JavaScript module is exposed as a global `HtmlComponent` namespace.
 
-const componentDefinition = {
-  name: 'div',
-  children: [
-    {
-      type: 'component-name',
-      id: 'hello-world-id',
-      message: 'Hello World'
-    }
-  ]
-};
-
-const {
-  htmlStringDefinition,
-  initializers
-} = buildHtmlComponent(componentDefinition);
-
-const htmlString = makeHtmlString(htmlStringDefinition);
-document.body.innerHTML = htmlString;
-
-const state = {};
-initialize(initializers, state);
+``` HTML
+<script src="node_modules/html-component/dist/html-component.js"></script>
+<script>
+  const {
+    htmlComponents,
+    registerHtmlComponent,
+    makeHtmlDefinition,
+    initialize
+   } = HtmlComponent;
+</script>
 ```

@@ -14,7 +14,7 @@ export function registerHtmlComponent(type, htmlComponent) {
 /**
  * Turn an HTML component definition to HTML string definition.
  * @param {any} definition
- * @returns {{ htmlStringDefinition: any, initializers: [object] }}
+ * @returns {any}
  */
 export function makeHtmlDefinition(definition = {}, callback) {
 	if (definition == null) {
@@ -57,16 +57,16 @@ export function makeHtmlDefinition(definition = {}, callback) {
 
 /**
  * Initialize all HTML components.
- * @param {[object]} initializers
+ * @param {[object]} definitions
  * @param {object} state
  * @returns {undefined | Promise}
  */
-export function initialize(initializers = [], state) {
+export function initialize(definitions = [], state) {
 	let promise;
 
-	const length = initializers.length;
+	const length = definitions.length;
 	for (let index = 0; index < length; index++) {
-		const definition = initializers[index];
+		const definition = definitions[index];
 		const { type } = definition;
 		if (!htmlComponents[type].initialize) continue;
 

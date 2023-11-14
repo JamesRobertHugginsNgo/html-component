@@ -73,9 +73,9 @@ const componentDefinition = {
 	]
 };
 
-const initializers = [];
+const definitions = [];
 const htmlDefinition = makeHtmlDefinition(componentDefinition, (definition) => {
-	initializers.push(definition);
+	definitions.push(definition);
 });
 
 const htmlString = makeHtmlString(htmlDefinition);
@@ -85,8 +85,8 @@ console.log('HTML DEFINITION', inspect(htmlDefinition));
 console.log('HTML STRING', htmlString);
 
 const state = {};
-console.log('INITIALIZERS', initializers);
+console.log('DEFINITIONS', definitions);
 console.group('INITIALIZE');
-initialize(initializers, state);
+initialize(definitions, state);
 console.groupEnd();
 console.log('STATE', state);
