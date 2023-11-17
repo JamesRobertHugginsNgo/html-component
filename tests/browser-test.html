@@ -62,6 +62,19 @@
 						message
 					]
 				};
+			},
+			initialize(definition, state) {
+				if (state) {
+					const { id } = definition;
+					const { counter = 0 } = state;
+					console.log(counter, id);
+					Object.assign(state, { counter: counter + 1 });
+					return new Promise((resolve) => {
+						setTimeout(() => {
+							resolve();
+						}, 500);
+					});
+				}
 			}
 		});
 
@@ -80,9 +93,9 @@
 			]
 		};
 
-		const initializers = [];
+		const definitions = [];
 		const htmlDefinition = makeHtmlDefinition(componentDefinition, (definition) => {
-			initializers.push(definition);
+			definitions.push(definition);
 		});
 
 		const htmlString = makeHtmlString(htmlDefinition);
@@ -94,11 +107,12 @@
 		document.body.innerHTML = htmlString;
 
 		const state = {};
-		console.log('INITIALIZERS', initializers);
+		console.log('DEFINITIONS', definitions);
 		console.group('INITIALIZE');
-		initialize(initializers, state);
-		console.groupEnd();
-		console.log('STATE', state);
+		initialize(definitions, state).then(() => {
+			console.groupEnd();
+			console.log('STATE', state);
+		});
 	</script>
 </body>
 
