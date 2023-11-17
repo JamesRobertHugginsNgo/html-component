@@ -70,16 +70,16 @@ export function initialize(definitions = [], state) {
 		const { type } = definition;
 		if (!htmlComponents[type].initialize) continue;
 
-		const result = htmlComponents[type].initialize(definition, state);
-		if (result instanceof Promise && !promise) {
-			promise = result;
+		if (promise) {
+			promise = promise.then(() => {
+				return htmlComponents[type].initialize(definition, state);
+			});
 			continue;
 		}
 
-		if (promise) {
-			promise = promise.then(() => {
-				return result;
-			});
+		const result = htmlComponents[type].initialize(definition, state);
+		if (result instanceof Promise) {
+			promise = result;
 		}
 	}
 
