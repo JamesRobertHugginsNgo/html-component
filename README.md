@@ -5,7 +5,7 @@ JavaScript module for a reusable way of making [make-html-string](https://github
 ## NPM Installation
 
 ```
-npm install https://github.com/JamesRobertHugginsNgo/html-component.git#3.0.0
+npm install https://github.com/JamesRobertHugginsNgo/html-component.git#3.0.1
 ```
 
 ## Constant Variable: htmlComponents
