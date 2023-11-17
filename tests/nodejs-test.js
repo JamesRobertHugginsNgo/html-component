@@ -1,4 +1,4 @@
-/* global console */
+/* global console setTimeout */
 
 import getId from 'get-id';
 import makeHtmlString from 'make-html-string';
@@ -51,6 +51,19 @@ registerHtmlComponent('test2', {
 				message
 			]
 		};
+	},
+	initialize(definition, state) {
+		if (state) {
+			const { id } = definition;
+			const { counter = 0 } = state;
+			console.log(counter, id);
+			Object.assign(state, { counter: counter + 1 });
+			return new Promise((resolve) => {
+				setTimeout(() => {
+					resolve();
+				}, 500);
+			});
+		}
 	}
 });
 
@@ -87,6 +100,8 @@ console.log('HTML STRING', htmlString);
 const state = {};
 console.log('DEFINITIONS', definitions);
 console.group('INITIALIZE');
-initialize(definitions, state);
-console.groupEnd();
-console.log('STATE', state);
+initialize(definitions, state).then(() => {
+	console.groupEnd();
+	console.log('STATE', state);
+});
+
