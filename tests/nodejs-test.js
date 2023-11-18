@@ -36,7 +36,7 @@ registerHtmlComponent('test1', {
 	}
 });
 
-registerHtmlComponent('test2', {
+const test2 = {
 	makeHtmlDefinition: (definition) => {
 		const {
 			id = getId('test-2-'),
@@ -65,7 +65,7 @@ registerHtmlComponent('test2', {
 			});
 		}
 	}
-});
+};
 
 function inspect(object) {
 	return Util.inspect(object, { showHidden: false, depth: null, colors: true });
@@ -75,7 +75,7 @@ const componentDefinition = {
 	type: 'test1',
 	message: [
 		{
-			type: 'test2',
+			type: test2,
 			message: 'World'
 		},
 		' ',
@@ -104,4 +104,3 @@ initialize(definitions, state).then(() => {
 	console.groupEnd();
 	console.log('STATE', state);
 });
-
