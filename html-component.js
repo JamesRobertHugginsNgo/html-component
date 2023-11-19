@@ -33,8 +33,11 @@ export function makeHtmlDefinition(definition = {}, callback) {
 
 		const { type } = definition;
 		if (type) {
+			const htmlComponent = typeof type === 'object'
+				? type
+				: htmlComponents[type];
 			const value = makeHtmlDefinition(
-				htmlComponents[type].makeHtmlDefinition(definition),
+				htmlComponent.makeHtmlDefinition(definition),
 				callback
 			);
 			if (callback) {
@@ -68,16 +71,19 @@ export function initialize(definitions = [], state) {
 	for (let index = 0; index < length; index++) {
 		const definition = definitions[index];
 		const { type } = definition;
-		if (!htmlComponents[type].initialize) continue;
+		const htmlComponent = typeof type === 'object'
+		? type
+		: htmlComponents[type];
+		if (!htmlComponent.initialize) continue;
 
 		if (promise) {
 			promise = promise.then(() => {
-				return htmlComponents[type].initialize(definition, state);
+				return htmlComponent.initialize(definition, state);
 			});
 			continue;
 		}
 
-		const result = htmlComponents[type].initialize(definition, state);
+		const result = htmlComponent.initialize(definition, state);
 		if (result instanceof Promise) {
 			promise = result;
 		}

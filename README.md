@@ -5,7 +5,7 @@ JavaScript module for a reusable way of making [make-html-string](https://github
 ## NPM Installation
 
 ```
-npm install https://github.com/JamesRobertHugginsNgo/html-component.git#3.0.1
+npm install https://github.com/JamesRobertHugginsNgo/html-component.git#3.1.0
 ```
 
 ## Constant Variable: htmlComponents
@@ -25,7 +25,7 @@ Argument | Type | Description
 
 Argument | Type | Description
 -- | -- | --
-`definition` | `string` | _Optional_. Similar to the `definition` argument for the [make-html-string](https://github.com/JamesRobertHugginsNgo/make-html-string) function, but also allows custom definition used by HTML component. HTML component is defined by the `type` definition. _Default to `{}`_
+`definition` | `object` | _Optional_. Similar to the `definition` argument for the [make-html-string](https://github.com/JamesRobertHugginsNgo/make-html-string) function, but also allows custom definition used by HTML component.<br><br>HTML component is assigned using the definition's `type` property. When it's a `string`, it uses an HTML component registered using the `registerHtmlComponent` function. It will match the registration `type` argument.<br><br>_Default to `{}`_.
 `callback` | `function` | _Optional_. Called after an HTML component calls its `makeHtmlDefinition` function passing the current HTML component's `definition` in the order when they finish. Use `callback` to generate the `definitions` argument for the `initialize` function.
 
 Return type: `any`.
